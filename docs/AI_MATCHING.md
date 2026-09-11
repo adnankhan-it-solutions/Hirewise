@@ -1,0 +1,11 @@
+# Matching implementation and boundaries
+
+Current provider is `local-rules`, model `rules-v1`, prompt `none-local-rules`. It is a conservative evidence baseline, **not** the complete hybrid semantic/AI matching engine requested in the target brief. No LLM/embedding provider is connected, and no candidate data leaves the platform for AI processing.
+
+Clean documents are extracted into page/paragraph/line sections with parser version and unverified confidence. Structured job criteria carry category, mandatory flag and weight. Skill/language/preferred terms and a small curated equivalence map locate excerpts. Experience, education and certifications are unknown until human verification; the system never infers tenure from keywords. A mention is labelled unverified, never a passed mandatory criterion or proof of competence. Negative context is filtered conservatively. The score represents evidence-mention coverage; recommendation remains Review Required. Suspicious instruction-like text withholds scoring entirely. These controls limit harm but do not constitute comprehensive prompt-injection detection.
+
+Every run persists sources, input hash, policy snapshot/version, engine/provider/prompt version, timestamp, score, evidence and warnings. Rescreening adds history and never changes recruitment stage. Recruiter decisions require separate human actions and reasons.
+
+Provider protocols exist for CV parsing, embeddings and candidate matching. A production hybrid engine must add a reviewed schema for candidate facts, equivalence calibration, semantic relevance, contextual reasoning, evidence pointer validation, protected-field redaction, provider-level output validation and fairness evaluation on representative synthetic/consented test data. These are remaining implementation requirements, not completed features. The site must not advertise semantic AI as operating until they are implemented and tested.
+
+Test coverage includes malicious CV instruction text, negation, unknown experience, policy history and application preservation when processing fails. Parser runs only after clean antivirus status with 20-second CPU, 512 MB address-space and 30-second wall-time limits. Empty/image-only/encrypted/oversized documents require manual review; OCR is not currently supported.

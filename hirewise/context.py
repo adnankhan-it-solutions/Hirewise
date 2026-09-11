@@ -2,5 +2,11 @@ from django.conf import settings
 
 
 def brand(request):
-    return {'platform_name': settings.PLATFORM_NAME, 'support_email': settings.SUPPORT_EMAIL,
-            'development': settings.DEBUG}
+    name, email = settings.PLATFORM_NAME, settings.SUPPORT_EMAIL
+    if not getattr(request, 'pages_export', False):
+        from .models import PlatformConfig
+        config = PlatformConfig.objects.filter(pk=1).first()
+        if config:
+            name, email = config.platform_name, config.support_email
+    return {'platform_name': name, 'support_email': email,
+            'development': settings.ENVIRONMENT == 'development'}

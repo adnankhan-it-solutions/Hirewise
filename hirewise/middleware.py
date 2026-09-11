@@ -1,4 +1,6 @@
 import uuid
+import json
+import logging
 
 
 class SecurityMiddleware:
@@ -14,4 +16,9 @@ class SecurityMiddleware:
         if request.path.startswith(('/dashboard/', '/accounts/', '/portal/', '/applications/', '/documents/', '/interviews/')):
             response['X-Robots-Tag'] = 'noindex, nofollow'
             response['Cache-Control'] = 'no-store, private'
+        route = getattr(getattr(request, 'resolver_match', None), 'url_name', None) or 'unmatched'
+        logging.getLogger('hirewise.requests').info(json.dumps({
+            'event': 'http.request', 'request_id': str(request.correlation_id),
+            'route': route, 'method': request.method, 'status': response.status_code,
+        }))
         return response

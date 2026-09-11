@@ -84,8 +84,13 @@ DATA_UPLOAD_MAX_MEMORY_SIZE = 6 * 1024 * 1024
 FILE_UPLOAD_MAX_MEMORY_SIZE = 1024 * 1024
 PASSWORD_RESET_TIMEOUT = 3600
 LOGGING = {'version': 1, 'disable_existing_loggers': False,
-           'handlers': {'console': {'class': 'logging.StreamHandler'}},
-           'root': {'handlers': ['console'], 'level': 'WARNING'}}
+           'handlers': {'console': {'class': 'logging.StreamHandler'}, 'null': {'class': 'logging.NullHandler'}},
+           'root': {'handlers': ['console'], 'level': 'WARNING'},
+           'loggers': {'hirewise.requests': {'handlers': ['console'], 'level': 'INFO' if not DEBUG else 'WARNING', 'propagate': False},
+                       # Raw request URLs may contain one-time verification/download tokens.
+                       'django.server': {'handlers': ['null'], 'propagate': False},
+                       'django.request': {'handlers': ['null'], 'propagate': False},
+                       'django.security': {'handlers': ['null'], 'propagate': False}}}
 if not DEBUG:
     if SECRET_KEY.startswith('local-') or len(SECRET_KEY) < 50:
         raise ImproperlyConfigured('Production requires a random SECRET_KEY of at least 50 characters.')

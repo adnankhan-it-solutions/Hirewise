@@ -12,3 +12,5 @@ staticfiles/
 htmlcov/
 test-results/
 *.log
+
+public-site/
