@@ -1,0 +1,1 @@
+{% extends 'base.html' %}{% block content %}<article class="prose section"><span class="eyebrow">{{ platform_name }}</span><h1>{{ title }}</h1>{% if status %}<span class="badge">{{ status }}</span>{% endif %}<div>{{ body|linebreaks }}</div><a class="arrow-link" href="{% url 'home' %}">Back to home ↗</a></article>{% endblock %}
