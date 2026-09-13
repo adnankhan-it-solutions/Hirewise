@@ -42,7 +42,7 @@ class Command(BaseCommand):
                     continue
                 result = subprocess.run([sys.executable, '-m', 'hirewise.parser', document.extension], input=data, capture_output=True,
                                         timeout=30, check=True, cwd=settings.BASE_DIR,
-                                        env={'PATH': '/usr/bin:/bin', 'PYTHONIOENCODING': 'utf-8'})
+                env={'PATH': '/usr/local/bin:/usr/bin:/bin', 'PYTHONIOENCODING': 'utf-8'})
                 sections = json.loads(result.stdout)
                 if not isinstance(sections, list) or any(not isinstance(s, dict) or set(s) != {'section', 'text'} or not all(isinstance(v, str) for v in s.values()) for s in sections):
                     raise ValueError('invalid_extraction_schema')

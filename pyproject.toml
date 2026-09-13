@@ -8,3 +8,5 @@ select = ["E4", "E7", "E9", "F"]
 
 [tool.ruff.lint.per-file-ignores]
 "manage.py" = ["E402"]
+
+"scripts/browser_smoke.py" = ["E402"]

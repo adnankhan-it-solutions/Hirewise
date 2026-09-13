@@ -8,5 +8,5 @@ def brand(request):
         config = PlatformConfig.objects.filter(pk=1).first()
         if config:
             name, email = config.platform_name, config.support_email
-    return {'platform_name': name, 'support_email': email,
+    return {'platform_name': name, 'platform_logo': settings.PLATFORM_LOGO, 'support_email': email,
             'development': settings.ENVIRONMENT == 'development'}

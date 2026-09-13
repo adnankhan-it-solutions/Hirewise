@@ -59,7 +59,11 @@ def store_document(upload):
     key = f'quarantine/{uuid.uuid4().hex}{ext}'
     bucket = os.environ.get('PRIVATE_BUCKET')
     if bucket:
-        s3().put_object(Bucket=bucket, Key=key, Body=data, ServerSideEncryption='AES256', ContentType='application/octet-stream')
+        options = {'Bucket': bucket, 'Key': key, 'Body': data, 'ContentType': 'application/octet-stream'}
+        encryption = os.environ.get('S3_SERVER_SIDE_ENCRYPTION', 'AES256')
+        if encryption:
+            options['ServerSideEncryption'] = encryption
+        s3().put_object(**options)
     elif settings.ENVIRONMENT == 'development':
         key = default_storage.save(key, ContentFile(data))
     else:

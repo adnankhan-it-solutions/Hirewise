@@ -6,8 +6,8 @@
 - [x] Responsive desktop/mobile design and local browser check.
 - [x] Static links use the repository base path.
 - [x] GitHub Actions test/build and Pages workflow supplied.
-- [ ] Push commit and inspect actual GitHub Actions result.
-- [ ] Set repository Pages source to GitHub Actions if not already set.
+- [x] Push commit and inspect actual GitHub Actions result: application checks passed on PostgreSQL 16 and container build.
+- [x] Owner set repository Pages source to GitHub Actions.
 - [ ] Verify the live URL and pages/CSS/HTTPS after deployment.
 
 ## Authenticated production service — intake remains disabled
@@ -32,5 +32,14 @@
 - [ ] Monitoring, incident contacts, error/queue alerts, uptime and rollback drill.
 - [ ] Separate staging/production secrets and no default/demo passwords/data.
 - [ ] Production configuration check and deploy-time authorization to enable intake.
+
+## Startup hosting package verification
+
+- [x] Compose file parsed successfully; PostgreSQL, object storage and ClamAV publish no host ports.
+- [x] Shell scripts passed syntax checks.
+- [x] Local real-browser workflow passed: candidate login, CV upload/confirmation, recruiter blind review and reasoned shortlist.
+- [ ] Build and run the container stack on a Docker-capable machine (Docker is unavailable in this development environment).
+- [ ] Verify real ClamAV clean/malware handling and MinIO persistence through container restarts.
+- [ ] Supply a public server/domain and complete every production gate before real data intake.
 
 Unmarked items are genuinely outstanding. Do not announce the complete commercial recruitment service as ready based on static-site deployment or passing local unit tests.

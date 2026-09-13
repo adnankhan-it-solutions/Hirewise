@@ -16,11 +16,12 @@ The target in OWNER_BRIEF.md remains the full requested product. Checkpoints bel
 
 ## Verification performed locally
 
-- 33 Django tests passed on local SQLite; PostgreSQL CI configured, not yet observed.
+- 33 Django tests passed on local SQLite; PostgreSQL 16 GitHub CI also passed on commit c67a8ce, including the container build.
 - Ruff static checks passed; migration drift check passed; Django system check passed.
 - Locked dependency audit: no known vulnerabilities reported.
-- Chromium desktop/mobile public-page rendering and synthetic mobile registration passed. No horizontal overflow at 390px.
+- Chromium desktop/mobile rendering passed with no horizontal overflow at 390px. A synthetic end-to-end browser flow passed candidate login, TXT CV upload/confirmation, recruiter blind review and reasoned shortlist.
 - Static export test confirms no DB queries, candidate text, account forms or private route links.
-- Production service, antivirus integration, production database restore and full browser recruitment flow are not verified.
+- `startup_hosting/` now packages the web app, PostgreSQL, private MinIO, ClamAV, workers and Caddy. YAML/shell structure is validated, but Docker is unavailable here, so container integration, antivirus fixture and restart persistence remain unverified.
+- Production service, public backend reachability, real SMTP, antivirus integration and production database restore are not verified.
 
 Owner has clarified that the immediate hosting target is GitHub, with no external hosting account. Public project-site deployment is possible there; the full authenticated SaaS cannot run on GitHub Pages. The original full product scope remains explicitly outstanding where marked above.

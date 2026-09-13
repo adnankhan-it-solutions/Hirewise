@@ -1,0 +1,140 @@
+name: ${COMPOSE_PROJECT_NAME:-hirewise_startup}
+services:
+  proxy:
+    image: caddy:2.10.2-alpine
+    restart: unless-stopped
+    depends_on:
+      web:
+        condition: service_healthy
+    environment:
+      SITE_ADDRESS: ${SITE_ADDRESS:-:8080}
+    ports:
+      - "8080:8080"
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    read_only: true
+    tmpfs:
+      - /tmp
+
+  web:
+    build:
+      context: ..
+      dockerfile: startup_hosting/Dockerfile
+    restart: unless-stopped
+    env_file: .env.hosting
+    depends_on:
+      database:
+        condition: service_healthy
+      object-init:
+        condition: service_completed_successfully
+    command: ["gunicorn", "config.wsgi:application", "--bind", "0.0.0.0:8000", "--workers", "2", "--timeout", "60", "--access-logfile", "/dev/null"]
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8000/health/"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+    read_only: true
+    tmpfs:
+      - /tmp
+
+  document-worker:
+    build:
+      context: ..
+      dockerfile: startup_hosting/Dockerfile
+    restart: unless-stopped
+    env_file: .env.hosting
+    depends_on:
+      database:
+        condition: service_healthy
+      object-init:
+        condition: service_completed_successfully
+      antivirus:
+        condition: service_healthy
+    command: ["/bin/sh", "/app/startup_hosting/document-worker.sh"]
+    volumes:
+      - ./clamdscan.conf:/etc/clamav/clamd.conf:ro
+    read_only: true
+    tmpfs:
+      - /tmp
+
+  notification-worker:
+    build:
+      context: ..
+      dockerfile: startup_hosting/Dockerfile
+    restart: unless-stopped
+    env_file: .env.hosting
+    depends_on:
+      database:
+        condition: service_healthy
+    command: ["/bin/sh", "/app/startup_hosting/notification-worker.sh"]
+    read_only: true
+    tmpfs:
+      - /tmp
+
+  database:
+    image: postgres:16.10-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    shm_size: 256mb
+
+  object-storage:
+    image: quay.io/minio/minio:RELEASE.2025-07-23T15-54-02Z
+    restart: unless-stopped
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+    command: ["server", "/data"]
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    volumes:
+      - object_data:/data
+
+  object-init:
+    image: quay.io/minio/mc:RELEASE.2025-07-21T05-28-08Z
+    depends_on:
+      object-storage:
+        condition: service_healthy
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+      PRIVATE_BUCKET: ${PRIVATE_BUCKET}
+    entrypoint: ["/bin/sh", "/init/init-object-storage.sh"]
+    volumes:
+      - ./init-object-storage.sh:/init/init-object-storage.sh:ro
+
+  antivirus:
+    image: clamav/clamav:1.4.3
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "printf 'PING\n' | nc 127.0.0.1 3310 | grep -q PONG"]
+      interval: 20s
+      timeout: 10s
+      retries: 30
+      start_period: 90s
+    volumes:
+      - clamav_data:/var/lib/clamav
+
+volumes:
+  postgres_data:
+  object_data:
+  clamav_data:
+  caddy_data:
+  caddy_config:

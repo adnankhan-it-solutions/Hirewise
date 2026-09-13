@@ -26,7 +26,7 @@ ROOT_URLCONF = 'config.urls'
 WSGI_APPLICATION = 'config.wsgi.application'
 TEMPLATES = [{'BACKEND': 'django.template.backends.django.DjangoTemplates', 'DIRS': [BASE_DIR / 'templates'],
               'APP_DIRS': True, 'OPTIONS': {'context_processors': [
-                  'django.template.context_processors.request', 'django.contrib.auth.context_processors.auth',
+                  'django.template.context_processors.request', 'django.template.context_processors.i18n', 'django.contrib.auth.context_processors.auth',
                   'django.contrib.messages.context_processors.messages', 'hirewise.context.brand',
               ]}}]
 DATABASES = {'default': dj_database_url.config(default=f'sqlite:///{BASE_DIR / "db.sqlite3"}', conn_max_age=60)}
@@ -77,6 +77,7 @@ EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', 'Hirewise <noreply@example.invalid>')
 PUBLIC_ORIGIN = os.environ.get('PUBLIC_ORIGIN', 'http://localhost:8000').rstrip('/')
 PLATFORM_NAME = os.environ.get('PLATFORM_NAME', 'Hirewise')
+PLATFORM_LOGO = os.environ.get('PLATFORM_LOGO', 'logo.webp')
 SUPPORT_EMAIL = os.environ.get('SUPPORT_EMAIL', '')
 MFA_ENCRYPTION_KEY = os.environ.get('MFA_ENCRYPTION_KEY', '')
 UPLOAD_MAX_BYTES = 5 * 1024 * 1024

@@ -21,6 +21,7 @@ def cipher():
 
 
 def audit(request, action, entity=None, company=None, reason='', **metadata):
+    metadata['actor_role'] = request.user.role if request.user.is_authenticated else 'guest'
     return AuditEvent.objects.create(
         actor=request.user if request.user.is_authenticated else None,
         company=company, action=action, entity_type=entity.__class__.__name__ if entity else '',
