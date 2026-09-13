@@ -1,2 +1,4 @@
 .env.hosting
+.env.pc
 backups/
+runtime/
